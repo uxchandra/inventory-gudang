@@ -57,10 +57,6 @@
             <img alt="image" src="assets/img/avatar/avatar-1.png" class="rounded-circle mr-1">
             <div class="d-sm-none d-lg-inline-block text-dark">Hi, {{ auth()->user()->name }}</div></a>
             <div class="dropdown-menu dropdown-menu-right">
-              <a href="/ubah-password" class="dropdown-item has-icon">
-                <i class="fa fa-sharp fa-solid fa-lock"></i> Ubah Password
-              </a>
-              <div class="dropdown-divider"></div>
                   <a class="dropdown-item" href="{{ route('logout') }}"
                     onclick="event.preventDefault();
                                 Swal.fire({
@@ -94,21 +90,19 @@
           </div>
 
           <ul class="sidebar-menu"> 
-            @if (auth()->user()->role->role === 'kepala gudang')
+            @if (auth()->user()->role->role === 'admin service')
               <li class="sidebar-item">
                 <a class="nav-link  {{ Request::is('/') || Request::is('dashboard') ? 'active' : '' }}" href="/">
                   <i class="fas fa-fire "></i> <span class="align-middle">Dashboard</span>
                 </a>
               </li>
   
-              <li class="menu-header">LAPORAN</li>
-              <li><a class="nav-link {{ Request::is('laporan-stok') ? 'active' : '' }}" href="laporan-stok"><i class="fa fa-sharp fa-reguler fa-file"></i><span>Stok</span></a></li>
-              <li><a class="nav-link {{ Request::is('laporan-barang-masuk') ? 'active' : '' }}" href="laporan-barang-masuk"><i class="fa fa-regular fa-file-import"></i><span>Barang Masuk</span></a></li>
-              <li><a class="nav-link {{ Request::is('laporan-barang-keluar') ? 'active' : '' }}" href="laporan-barang-keluar"><i class="fa fa-sharp fa-regular fa-file-export"></i><span>Barang Keluar</span></a></li>
+              <li class="menu-header">MANAJEMEN BARANG</li>
+              <li><a class="nav-link {{ Request::is('permintaan-produk') ? 'active' : '' }}" href="permintaan-produk"><i class="fa fa-sharp fa-solid fa-clipboard-list"></i> <span>Permintaan Produk</span></a></li>  
             
             @endif
 
-            @if (auth()->user()->role->role === 'superadmin')
+            @if (auth()->user()->role->role === 'kepala gudang')
               <li class="sidebar-item">
                 <a class="nav-link {{ Request::is('/') || Request::is('dashboard') ? 'active' : '' }}" href="/dashboard">
                   <i class="fas fa-fire"></i> <span class="align-middle">Dashboard</span>

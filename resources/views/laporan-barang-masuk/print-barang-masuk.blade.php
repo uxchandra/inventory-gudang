@@ -43,22 +43,18 @@
         <thead>
             <tr>
                 <th>No</th>
-                <th>Kode Transaksi</th>
                 <th>Tanggal Masuk</th>
                 <th>Nama Barang</th>
                 <th>Jumlah Masuk</th>
-                <th>Supplier</th>
             </tr>
         </thead>
         <tbody>
             @foreach($data as $index => $item)
             <tr>
                 <td>{{ $index + 1 }}</td>
-                <td>{{ $item->kode_transaksi }}</td>
                 <td>{{ $item->tanggal_masuk }}</td>
                 <td>{{ $item->nama_barang}} </td>
                 <td>{{ $item->jumlah_masuk}} </td>
-                <td>{{ $item->supplier->supplier}} </td>
             </tr>
             @endforeach
         </tbody>
