@@ -87,9 +87,14 @@
 
                 if (response.length > 0) {
                     $.each(response, function(index, item) {
+                        var tanggalMasuk = new Date(item.tanggal_masuk);
+                        var formattedDate = ('0' + tanggalMasuk.getDate()).slice(-2) + '-' +
+                                ('0' + (tanggalMasuk.getMonth() + 1)).slice(-2) + '-' +
+                                tanggalMasuk.getFullYear();
+
                         var row = [
                             (index + 1),
-                            item.tanggal_masuk,
+                            formattedDate,
                             item.nama_barang,
                             item.jumlah_masuk
                         ];

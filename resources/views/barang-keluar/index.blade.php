@@ -113,7 +113,7 @@
         });
     </script>
 
-    <!-- Show Modal Tambah Jenis Barang -->
+
     <script>
         $('body').on('click', '#button_tambah_barangKeluar', function() {
             $('#modal_tambah_barangKeluar').modal('show');

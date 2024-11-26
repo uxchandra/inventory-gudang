@@ -167,6 +167,10 @@ class BarangKeluarController extends Controller
         $namaBarang = $request->input('nama_barang');
         $barang = Barang::where('nama_barang', $namaBarang)->select('stok', 'satuan_id')->first();
 
+        if (!$barang) {
+            return response()->json(['stok' => 0, 'satuan_id' => null]); // Menyediakan default jika barang tidak ditemukan
+        }
+
         $response = [
             'stok'          => $barang->stok,
             'satuan_id'     => $barang->satuan_id

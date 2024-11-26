@@ -9,6 +9,7 @@ class Satuan extends Model
 {
     use HasFactory;
 
+    protected $table = 'satuans'; 
     protected $fillable = ['satuan'];
     protected $guarded = [''];
     protected $ignoreChangedAttributes = ['updated_at'];
@@ -18,5 +19,10 @@ class Satuan extends Model
     public function barangs()
     {
         return $this->hasMany(Barang::class);
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
     }
 }

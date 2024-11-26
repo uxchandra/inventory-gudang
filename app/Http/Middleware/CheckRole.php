@@ -16,10 +16,7 @@ class CheckRole
     public function handle(Request $request, Closure $next, ...$roles): Response
     {
         $user = auth()->user();
-        $userRole = $user->role->role;
 
-        logger('User Role: ' . $userRole);
-        logger('Allowed Roles: ' . implode(', ', $roles));
 
         if (in_array($user->role->role, $roles)) {
             return $next($request);

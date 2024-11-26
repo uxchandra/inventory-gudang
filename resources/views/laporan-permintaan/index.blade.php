@@ -3,9 +3,9 @@
 @section('content')
 
 <div class="section-header">
-    <h1>Laporan Barang Keluar</h1>
+    <h1>Laporan Permintaan Barang</h1>
     <div class="ml-auto">
-        <a href="javascript:void(0)" class="btn btn-danger" id="print-barang-keluar"><i class="fa fa-sharp fa-light fa-print"></i> Print PDF</a>
+        <a href="javascript:void(0)" class="btn btn-danger" id="print-permintaan"><i class="fa fa-sharp fa-light fa-print"></i> Print PDF</a>
     </div>
 </div>
 
@@ -14,7 +14,7 @@
         <div class="card">
             <div class="card-body">
                 <div class="form-group">
-                    <form id="filter_form" action="/laporan-barang-keluar/get-data" method="GET">
+                    <form id="filter_form" action="/laporan-permintaan/get-data" method="GET">
                         <div class="row">
                             <div class="col-md-5">
                                 <label>Pilih Tanggal Mulai :</label>
@@ -40,12 +40,12 @@
                         <thead>
                             <tr>
                                 <th>No</th>
-                                <th>Tanggal Keluar</th>
+                                <th>Tanggal Permintaan</th>
                                 <th>Nama Barang</th>
-                                <th>Jumlah Masuk</th>
+                                <th>Jumlah Permintaan</th>
                             </tr>
                         </thead>
-                        <tbody id="tabel-laporan-barang-keluar">
+                        <tbody id="tabel-laporan-permintaan">
                         </tbody>
                     </table>
                 </div>
@@ -57,26 +57,25 @@
 <!-- Script Get Data -->
 <script>
     $(document).ready(function() {
-        var table = $('#table_id').DataTable({ paging: true});
+        var table = $('#table_id').DataTable({ paging: true });
 
-        loadData(); // Panggil fungsi loadData saat halaman dimuat
+        loadData(); 
 
         $('#filter_form').submit(function(event) {
             event.preventDefault();
-            loadData(); // Panggil fungsi loadData saat tombol filter ditekan
+            loadData(); 
         });
 
         $('#refresh_btn').on('click', function() {
             refreshTable();
         });
 
-        //Fungsi load data berdasarkan range tanggal_mulai dan tanggal_selesai
         function loadData() {
             var tanggalMulai = $('#tanggal_mulai').val();
             var tanggalSelesai = $('#tanggal_selesai').val();
             
             $.ajax({
-                url: '/laporan-barang-keluar/get-data',
+                url: '/laporan-permintaan/get-data',
                 type: 'GET',
                 dataType: 'json',
                 data: {
@@ -84,59 +83,53 @@
                     tanggal_selesai: tanggalSelesai
                 },
                 success: function(response) {
-                    table.clear().draw(); // Hapus data yang sudah ada dari DataTable sebelum menambahkan data yang baru
+                    table.clear().draw(); 
 
                     if (response.length > 0) {
                         $.each(response, function(index, item) {
-                            var tanggalKeluar = new Date(item.tanggal_keluar);
-                            var formattedDate = ('0' + tanggalKeluar.getDate()).slice(-2) + '-' +
-                                ('0' + (tanggalKeluar.getMonth() + 1)).slice(-2) + '-' +
-                                tanggalKeluar.getFullYear();
+                            var tanggalPermintaan = new Date(item.tanggal);
+                            var formattedDate = ('0' + tanggalPermintaan.getDate()).slice(-2) + '-' +
+                                ('0' + (tanggalPermintaan.getMonth() + 1)).slice(-2) + '-' +
+                                tanggalPermintaan.getFullYear();
 
                             var row = [
                                 (index + 1),
-                                formattedDate,
+                                formattedDate, 
                                 item.nama_barang,
-                                item.jumlah_keluar
+                                item.jumlah_permintaan 
                             ];
-                            table.row.add(row).draw(false); // Tambahkan data yang baru ke DataTable
+                            table.row.add(row).draw(false); 
                         });
                     } else {
-                        var emptyRow = ['', 'Tidak ada data yang tersedia.', '', '', '', ''];
-                        table.row.add(emptyRow).draw(false); // Tambahkan baris kosong ke DataTable
+                        var emptyRow = ['', 'Tidak ada data yang tersedia.', '', ''];
+                        table.row.add(emptyRow).draw(false); 
                     }
                 },
-
                 error: function(xhr, status, error) {
                     console.log(error);
                 }
             });
-
         }
 
-        //Fungsi Refresh Tabel
+        // Fungsi Refresh Tabel
         function refreshTable(){
             $('#filter_form')[0].reset();
             loadData();
         }
 
-        //Print barang keluar
-        $('#print-barang-keluar').on('click', function(){
-            var tanggalMulai    = $('#tanggal_mulai').val();
-            var tanggalSelesai  = $('#tanggal_selesai').val();
+        // Print permintaan
+        $('#print-permintaan').on('click', function(){
+            var tanggalMulai = $('#tanggal_mulai').val();
+            var tanggalSelesai = $('#tanggal_selesai').val();
             
-            var url = '/laporan-barang-keluar/print-barang-keluar';
-
+            var url = '/laporan-permintaan/print';
             if(tanggalMulai && tanggalSelesai){
                 url += '?tanggal_mulai=' + tanggalMulai + '&tanggal_selesai=' + tanggalSelesai;
             }
 
             window.location.href = url;
         });
-
     });
 </script>
-
-
 
 @endsection

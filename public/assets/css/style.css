@@ -3940,4 +3940,41 @@ body:not(.sidebar-mini)
     color: #fff;
 }
 
+.button-group {
+    display: flex;
+    align-items: center; /* Vertikal center */
+    justify-content: flex-start; /* Atur di kiri */
+    gap: 10px; /* Jarak antara tombol */
+}
+
+.badge {
+    font-size: 0.9em; /* Ukuran font */
+    padding: 0.5em 1em; /* Spacing */
+    border-radius: 0.5em; /* Sudut melengkung */
+}
+
+.badge-success {
+    background-color: #28a745; /* Warna hijau untuk diterima */
+    color: white;
+}
+
+.badge-danger {
+    background-color: #dc3545; /* Warna merah untuk ditolak */
+    color: white;
+}
+
+.badge-warning {
+    background-color: #ffc107; /* Warna kuning untuk menunggu */
+    color: black;
+}
+
+.chart-container {
+    position: relative;
+    width: 80%; /* Atur persentase sesuai kebutuhan */
+    height: 300px; /* Atur tinggi sesuai kebutuhan */
+    margin: auto; /* Center jika perlu */
+}
+
+
+
 /*# sourceMappingURL=style.css.map */

@@ -102,7 +102,7 @@
             formData.append('_token', token);
 
             $.ajax({
-                url: '/permintaan-produk',
+                url: '/barang',
                 type: "POST",
                 cache: false,
                 data: formData,

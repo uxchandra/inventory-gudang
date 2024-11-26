@@ -33,7 +33,7 @@
 <body>
     <h1>Laporan Barang Masuk</h1>
     @if ($tanggalMulai && $tanggalSelesai)
-        <p>Rentang Tanggal : {{ $tanggalMulai }} - {{ $tanggalSelesai }}<p>
+        <p>Rentang Tanggal : {{ \Carbon\Carbon::parse($tanggalMulai)->format('d F Y') }} - {{ \Carbon\Carbon::parse($tanggalSelesai)->format('d F Y') }}</p>
     @else
         <p>Rentang Tanggal : Semua</p>
     @endif
@@ -52,7 +52,7 @@
             @foreach($data as $index => $item)
             <tr>
                 <td>{{ $index + 1 }}</td>
-                <td>{{ $item->tanggal_keluar }}</td>
+                <td>{{ \Carbon\Carbon::parse($item->tanggal_keluar)->format('d-m-Y') }}</td>
                 <td>{{ $item->nama_barang}} </td>
                 <td>{{ $item->jumlah_keluar}} </td>
             </tr>

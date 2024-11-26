@@ -1,7 +1,6 @@
 <?php
 
-use App\Http\Controllers\PermintaanProdukController;
-use App\Http\Controllers\ProfileController;
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\JenisController;
@@ -14,6 +13,9 @@ use App\Http\Controllers\LaporanBarangKeluarController;
 use App\Http\Controllers\ManajemenUserController;
 use App\Http\Controllers\HakAksesController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\LaporanPermintaanController;
+
 
 Route::middleware('auth')->group(function () {
 
@@ -24,6 +26,9 @@ Route::middleware('auth')->group(function () {
     
         Route::get('/hak-akses/get-data', [HakAksesController::class, 'getDataRole']);
         Route::resource('/hak-akses', HakAksesController::class);
+
+        Route::post('/permintaan-produk/{id}/approve', [OrderController::class, 'approve']);
+        Route::post('/permintaan-produk/{id}/reject', [OrderController::class, 'reject']);
     });
 
 
@@ -31,6 +36,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [DashboardController::class, 'index']);
         Route::resource('/dashboard', DashboardController::class);
 
+        Route::get('/permintaan-produk', [OrderController::class, 'index'])->name('permintaan-produk.index');;
+        Route::get('/permintaan-produk/get-data', [OrderController::class, 'getData']); 
     });
 
     Route::group(['middleware' => 'checkRole:kepala gudang,admin gudang'], function(){
@@ -67,13 +74,18 @@ Route::middleware('auth')->group(function () {
         Route::get('/laporan-barang-keluar/print-barang-keluar', [LaporanBarangKeluarController::class, 'printBarangKeluar']);
         Route::resource('/laporan-barang-keluar', LaporanBarangKeluarController::class);
 
-    });
-
-    Route::group(['middleware' => 'checkRole:kepala gudang,admin service'], function(){   
-        Route::resource('/permintaan-produk', PermintaanProdukController::class);
+        Route::post('/permintaan-produk/{id}/selesaikan', [OrderController::class, 'selesaikan']);
 
     });
 
+    Route::group(['middleware' => 'checkRole:kepala gudang,admin service'], function(){ 
+        Route::post('/permintaan-produk', [OrderController::class, 'store']);
+        Route::delete('/permintaan-produk/{id}', [OrderController::class, 'destroy']);
+
+        Route::get('/laporan-permintaan', [LaporanPermintaanController::class, 'index']);
+        Route::get('/laporan-permintaan/get-data', [LaporanPermintaanController::class, 'getData']);
+        Route::get('/laporan-permintaan/print', [LaporanPermintaanController::class, 'printPermintaan']);
+    });
 });
 
 require __DIR__.'/auth.php';
