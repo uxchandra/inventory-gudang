@@ -34,7 +34,6 @@ class OrderController extends Controller
         $validator = Validator::make($request->all(), [
             'nama_barang' => 'required|string|max:255',
             'jumlah_permintaan' => 'required|integer|min:1',
-            'satuan_id' => 'required|exists:satuans,id',
             'tanggal' => 'required|date'
         ]);
 
@@ -47,13 +46,13 @@ class OrderController extends Controller
             'user_id' => auth()->id(),
             'nama_barang' => $request->nama_barang,
             'jumlah_permintaan' => $request->jumlah_permintaan,
-            'satuan_id' => $request->satuan_id,
             'tanggal' => $request->tanggal,
             'status' => 'menunggu_konfirmasi' // Status default
         ]);
 
         return response()->json(['message' => 'Permintaan barang berhasil diajukan!', 'order' => $order], 201);
     }
+
 
     public function show($id)
     {
@@ -102,5 +101,33 @@ class OrderController extends Controller
         return response()->json(['message' => 'Permintaan barang telah diselesaikan!']);
     }
 
+    public function getAutoCompleteData(Request $request)
+    {
+        $barang = Barang::where('nama_barang', $request->nama_barang)->first();
+
+        if($barang){
+            return response()->json([
+                'nama_barang'   => $barang->nama_barang,
+                'satuan_id'     => $barang->satuan_id,
+            ]);
+        }
+    }
+
+    public function getSatuan()
+    {
+        $satuans = Satuan::all();
+        
+        return response()->json($satuans);
+    }
+
+    public function getBarangs(Request $request)
+    {
+        if ($request->has('q')) {
+            $barangs = Barang::where('nama_barang', 'like', '%' . $request->input('q') . '%')->get();
+            return response()->json($barangs);
+        }
+
+        return response()->json([]);
+    }
 
 }

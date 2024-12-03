@@ -17,6 +17,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\LaporanPermintaanController;
 
 
+
 Route::middleware('auth')->group(function () {
 
     Route::group(['middleware' => 'checkRole:kepala gudang'], function(){
@@ -38,6 +39,11 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/permintaan-produk', [OrderController::class, 'index'])->name('permintaan-produk.index');;
         Route::get('/permintaan-produk/get-data', [OrderController::class, 'getData']); 
+    });
+
+
+    Route::group(['middleware' => 'admin gudang'], function(){
+        Route::get('/api/satuan/', [BarangMasukController::class, 'getSatuan']);
     });
 
     Route::group(['middleware' => 'checkRole:kepala gudang,admin gudang'], function(){
@@ -80,6 +86,8 @@ Route::middleware('auth')->group(function () {
 
     Route::group(['middleware' => 'checkRole:kepala gudang,admin service'], function(){ 
         Route::post('/permintaan-produk', [OrderController::class, 'store']);
+        Route::get('/api/permintaan-produk/', [OrderController::class, 'getAutoCompleteData']);
+        Route::get('/api/satuan/', [OrderController::class, 'getSatuan']);
         Route::delete('/permintaan-produk/{id}', [OrderController::class, 'destroy']);
 
         Route::get('/laporan-permintaan', [LaporanPermintaanController::class, 'index']);

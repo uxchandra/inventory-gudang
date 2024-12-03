@@ -8,6 +8,7 @@ use App\Models\BarangMasuk;
 use App\Models\BarangKeluar;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
@@ -36,7 +37,7 @@ class DashboardController extends Controller
     
         $barangMinimum = Barang::where('stok', '<=', 10)->get();
 
-        $jumlahPermintaan = Order::count(); // Total permintaan
+        $jumlahPermintaan = Order::count();
         $barangPalingBanyakDiminta = Order::select('nama_barang', \DB::raw('SUM(jumlah_permintaan) as total'))
         ->where('status', 'selesai')
         ->groupBy('nama_barang')
@@ -49,12 +50,10 @@ class DashboardController extends Controller
         })->toArray();
         $label = $barangPalingBanyakDiminta->pluck('nama_barang')->values()->all();
 
-        // Debug data
-        \Log::info('Chart Data:', ['total' => $total, 'label' => $label]);
-
         $orders = Order::where('status', 'menunggu_konfirmasi')->get(); 
         
         $ordersAdmin = Order::where('status', 'diterima')->get();
+
         
         return view('dashboard', [
             'barang'            => $barangCount,
@@ -70,6 +69,29 @@ class DashboardController extends Controller
             'ordersAdmin'       => $ordersAdmin,
             'total'             => $total, 
             'label'             => $label, 
+        ]);
+    }
+
+    public function apiIndex()
+    {
+        $jumlahPermintaan = Order::count();
+        $barangPalingBanyakDiminta = Order::select('nama_barang', \DB::raw('SUM(jumlah_permintaan) as total'))
+        ->where('status', 'selesai')
+        ->groupBy('nama_barang')
+        ->orderBy('total', 'desc')
+        ->take(5) 
+        ->get();
+
+        $total = $barangPalingBanyakDiminta->pluck('total')->map(function ($value) {
+            return (int) $value; 
+        })->toArray();
+        $label = $barangPalingBanyakDiminta->pluck('nama_barang')->values()->all();
+
+        return response()->json([
+            'jumlahPermintaan'  => $jumlahPermintaan,
+            'barangPalingBanyakDiminta' => $barangPalingBanyakDiminta,
+            'total'             => $total,
+            'label'             => $label,
         ]);
     }
 

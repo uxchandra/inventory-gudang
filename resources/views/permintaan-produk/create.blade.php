@@ -18,8 +18,13 @@
                 </div>
 
                 <div class="form-group">
-                  <label>Nama Barang</label>
-                  <input type="text" class="form-control" name="nama_barang" id="nama_barang">
+                  <label>Pilih Barang</label>
+                  <select class="js-example-basic-single" name="nama_barang" id="nama_barang" style="width: 100%">
+                      <option selected>Pilih Barang</option>
+                      @foreach ($barangs as $barang)
+                        <option value="{{ $barang->nama_barang }}">{{ $barang->nama_barang }}</option>
+                      @endforeach
+                  </select>
                   <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-nama_barang"></div>
                 </div>
 
@@ -31,15 +36,7 @@
     
                 <div class="form-group">
                   <label>Satuan Barang</label>
-                  <select class="form-control" name="satuan_id" id="satuan_id">
-                    @foreach ($satuans as $satuan)
-                        @if (old('satuan_id') == $satuan->id)
-                          <option value="{{ $satuan->id }}" selected>{{ $satuan->satuan }}</option>
-                        @else
-                          <option value="{{ $satuan->id }}">{{ $satuan->satuan }}</option>
-                        @endif
-                    @endforeach
-                  </select>
+                  <input type="text" class="form-control" name="satuan_id" id="satuan_id" disabled>
                 </div>
               </div>
             </div>

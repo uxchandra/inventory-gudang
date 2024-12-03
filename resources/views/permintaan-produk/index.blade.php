@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @include('permintaan-produk.create')
-@include('barang-keluar.create', ['barangs' => $barangs])
 
 @section('content')
     <div class="section-header">
@@ -23,7 +22,6 @@
                                     <th>Tanggal</th>
                                     <th>Nama Barang</th>
                                     <th>Jumlah</th>
-                                    <th>Satuan</th>
                                     <th>Status</th>
                                     <th>Opsi</th>
                                 </tr>
@@ -52,7 +50,6 @@
         });
 
         function fetchData() {
-            console.log("Fetching data...");
             $.ajax({
                 url: "/permintaan-produk/get-data",
                 type: "GET",
@@ -87,7 +84,6 @@
                                 <td>${value.tanggal}</td>
                                 <td>${value.nama_barang}</td>
                                 <td>${value.jumlah_permintaan}</td>
-                                <td>${value.satuan?.satuan ?? "Satuan tidak tersedia"}</td>
                                 <td>
                                     <span class="badge 
                                         ${orderStatus === 'diterima' ? 'badge-success' : 
@@ -127,14 +123,12 @@
 
             let nama_barang = $('#nama_barang').val();
             let jumlah_permintaan = $('#jumlah_permintaan').val();
-            let satuan_id = $('#satuan_id').val();
             let tanggal = $('#tanggal').val();  // Menambahkan pengambilan input tanggal
             let token = $("meta[name='csrf-token']").attr("content");
 
             let formData = new FormData();
             formData.append('nama_barang', nama_barang);
             formData.append('jumlah_permintaan', jumlah_permintaan);
-            formData.append('satuan_id', satuan_id);
             formData.append('tanggal', tanggal);  // Menambahkan tanggal ke formData
             formData.append('_token', token);
 
@@ -142,6 +136,9 @@
                 url: '/permintaan-produk',
                 type: "POST",
                 cache: false,
+                headers: {
+                    'Authorization': 'Bearer ' + token 
+                },
                 data: formData,
                 contentType: false,
                 processData: false,
@@ -156,7 +153,6 @@
                     // Reset form dan tutup modal
                     $('#nama_barang').val('');
                     $('#jumlah_permintaan').val('');
-                    $('#satuan_id').val('');
                     $('#tanggal').val('');  // Reset input tanggal
                     $('#modal_tambah_permintaan').modal('hide');
 
@@ -298,14 +294,14 @@
                         newStatus === 'selesai' ? 'badge-primary' :
                         'badge-warning';
         
-        row.find('td:eq(5)').html(`<span class="badge ${badgeClass}">${newStatus}</span>`);
+        row.find('td:eq(4)').html(`<span class="badge ${badgeClass}">${newStatus}</span>`);
         
         // Update tombol berdasarkan role dan status baru
         if (auth.role === 'kepala gudang') {
             if (newStatus === "diterima" || newStatus === "ditolak") {
-                row.find('td:eq(6)').empty();
+                row.find('td:eq(5)').empty();
             } else {
-                row.find('td:eq(5)').html(`
+                row.find('td:eq(4)').html(`
                     <div class="button-group">
                         <a href="javascript:void(0)" id="button_approve_permintaan" data-id="${id}" class="btn btn-icon btn-success"><i class="fas fa-check"></i> Approve</a>
                         <a href="javascript:void(0)" id="button_reject_permintaan" data-id="${id}" class="btn btn-icon btn-danger"><i class="fas fa-times"></i> Reject</a>
@@ -322,28 +318,66 @@
             `);
         }
         
-        // Menghapus tombol "Selesaikan Proses" jika status sudah "selesai"
         if (newStatus === 'selesai') {
-            row.find('td:eq(6)').empty(); // Menghapus tombol di kolom tindakan
+            row.find('td:eq(5)').empty(); // Menghapus tombol di kolom tindakan
         }
     }
 </script>
 
-    <script>
-        // Mendapatkan tanggal hari ini
+<script>
+    $(document).ready(function() {
+        setTimeout(function() {
+            $('.js-example-basic-single').select2();
+
+            $('#nama_barang').on('change', function() {
+                var selectedOption = $(this).find('option:selected');
+                var nama_barang = selectedOption.text();
+
+                $.ajax({
+                    url: 'api/permintaan-produk', 
+                    type: 'GET',
+                    data: { nama_barang: nama_barang },
+                    success: function(response) {
+                        console.log('Response:', response); 
+                        if (response && response.satuan_id) {
+                            $('#satuan_id').val(response.satuan_id).change(); 
+                            getSatuanName(response.satuan_id, function(satuan) {
+                                $('#satuan_id').val(satuan); 
+                            });
+                        } else {
+                            $('#satuan_id').val(''); 
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error('Terjadi kesalahan saat mengambil data:', xhr);
+                    }
+                });
+            });
+            
+            function getSatuanName(satuanId, callback) {
+                $.getJSON('{{ url('api/satuan') }}', function(satuans) {
+                    var satuan = satuans.find(function(s) {
+                        return s.id === satuanId;
+                    });
+                    callback(satuan ? satuan.satuan : ''); 
+                });
+            }
+        }, 500);
+    });
+</script>
+
+<script>
         var today = new Date();
 
-        // Mendapatkan nilai tahun, bulan, dan tanggal
+
         var year = today.getFullYear();
-        var month = (today.getMonth() + 1).toString().padStart(2, '0'); // Ditambahkan +1 karena indeks bulan dimulai dari 0
+        var month = (today.getMonth() + 1).toString().padStart(2, '0'); 
         var day = today.getDate().toString().padStart(2, '0');
 
-        // Menggabungkan nilai tahun, bulan, dan tanggal menjadi format "YYYY-MM-DD"
         var formattedDate = year + '-' + month + '-' + day;
 
-        // Mengisi nilai input field dengan tanggal hari ini
         document.getElementById('tanggal').value = formattedDate;
-    </script>
+</script>
 
 
 @endsection

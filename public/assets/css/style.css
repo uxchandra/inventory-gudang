@@ -110,6 +110,10 @@ a:not(.btn-social-icon):not(.btn-social):not(.page-link) .fab {
     background-color: #191d21 !important;
 }
 
+.bg-inventory {
+    background-color: #339eab!important;
+}
+
 .text-primary,
 .text-primary-all *,
 .text-primary-all *:before,
